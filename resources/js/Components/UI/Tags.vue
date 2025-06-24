@@ -1,30 +1,67 @@
-<template v-once>
-    <p class=" mb-2 text-sm font-medium text-gray-900">{{ label }}</p>
-    <textarea v-if="mode === 'textarea'" v-bind="value"/>
-    <input class="border bg-gray-50 border-gray-600 rounded px-3 py-2" placeholder="Enter Skills.." v-else :value="value" v-on:change="onChange">
+<!-- resources/js/Components/Form/TagInput.vue -->
+<template>
+  <label for="" class="block mb-2 text-sm font-medium text-gray-900 ">{{ label }}</label>
+  <input ref="tagInputRef" :value="modelValue" />
+  <small v-if="error" class="mt-2 text-sm  text-red-600 ">{{ error }}</small>
+
 </template>
-  
-  <script>
-import Tagify from "@yaireo/tagify";
+
+<script>
+import Tagify from '@yaireo/tagify';
 import '@yaireo/tagify/dist/tagify.css';
-// import "./tagify.css"
-  
-  export default {
-    name: "Tags",
-    props: {
-      mode: String,
-      label: String,
-      settings: Object,
-      value: [String, Array],
-      onChange: Function
+
+export default {
+  name: 'TagInput',
+  props: {
+    error: String,
+    modelValue: {
+      type: [String, Array],
+      default: () => [],
     },
-    watch: {
-      value(newVal, oldVal) {
-        this.tagify.loadOriginalValues(newVal)
+    whitelist: {
+      type: Array,
+      default: () => [],
+    },
+    label: String,
+    placeholder: {
+      type: String,
+      default: 'Add tags...',
+    },
+  },
+  emits: ['update:modelValue'],
+  data() {
+    return {
+      tagify: null,
+    };
+  },
+  mounted() {
+    const inputEl = this.$refs.tagInputRef;
+
+    this.tagify = new Tagify(inputEl, {
+      whitelist: this.whitelist,
+      originalInputValueFormat: valuesArr => valuesArr.map(item => item.value),
+      dropdown: {
+        maxItems: 20,
+        enabled: 0,
+        closeOnSelect: false,
       },
-    },
-    mounted() {
-      this.tagify = new Tagify(this.$el, this.settings)
+      enforceWhitelist: false,
+      placeholder: this.placeholder,
+    });
+
+    // Set initial value
+    if (Array.isArray(this.modelValue)) {
+      this.tagify.addTags(this.modelValue);
     }
-  };
-  </script>
+
+    // Emit on change
+    this.tagify.on('change', () => {
+      const values = this.tagify.value.map(tag => tag.value);
+      this.$emit('update:modelValue', values);
+    });
+  },
+  beforeUnmount() {
+    this.tagify.destroy();
+  },
+};
+</script>

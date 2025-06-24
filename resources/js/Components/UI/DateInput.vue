@@ -12,6 +12,8 @@
         @input="$emit('update:modelValue', $event.target.value)"
         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
+      <small v-if="error" class="mt-2 text-sm  text-red-600 ">{{ error }}</small>
+
     </div>
   </template>
   
@@ -21,6 +23,7 @@
       name: String,
       label: String,
       modelValue: String, // in format "YYYY-MM-DD"
+      error: String,
     },
     computed: {
       minDate() {

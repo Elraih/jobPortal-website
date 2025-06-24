@@ -5,55 +5,32 @@
       <form @submit.prevent="submitJob" class="space-y-6">
         <!-- Job Title -->
         <div>
-            <Input label="Title" placeholder="Job Title" name="title" required error="name"/>
+          <Input label="Title" v-model="form.title" placeholder="Job Title" name="title"  :error="form.errors.title"/>
         </div>
-  
+       
         <!-- Job Category + Type + Level -->
         <div class="grid md:grid-cols-3 gap-4">
             <div>
-                <Select name="Category" label="Select Category" optionTitle="choose a category"
-            :values="categories" 
+                <Select name="Category" label="Select Job Category" optionTitle="choose a category"
+            :values="jobCategories" labelKey="name" v-model="form.job_category_id"
+            :error="form.errors.job_category_id"
             />
             </div>
-          <div>
-            <Select name="Category" label="Select Category" optionTitle="choose a category"
-            :values="categories" 
+            <div>
+                <Select name="Type" label="Select Job Type" optionTitle="choose a Type"
+            :values="jobTypes" labelKey="job_type" v-model="form.job_type_id"
+            :error="form.errors.job_type_id"
             />
-          </div>
-  
-          <div>
-            <Select name="Category" label="Select Category" optionTitle="choose a category"
-            :values="categories" 
+            </div>
+            <div>
+                <Select name="Governorate" label="Select Location" optionTitle="choose a Location"
+            :values="governorates" labelKey="name" v-model="form.governorate_id"
+            :error="form.errors.governorate_id"
             />
-          </div>
-  
-          <div>
-            <Select name="Category" label="Select Category" optionTitle="choose a category"
-            :values="categories" 
-            />
-          </div>
+            </div>
+
         </div>
   
-        <!-- Location + Remote Toggle -->
-        <div>
-            <h3 class="mb-4 text-lg font-semibold text-gray-900">Technologies</h3>
-
-            <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                <li v-for="tech in technologies" :key="tech.id" class="bg-white border border-gray-200 rounded-lg p-3">
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input
-                    type="checkbox"
-                    :id="tech.id"
-                    :value="tech.value"
-                    v-model="selectedTechnologies"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2"
-                    />
-                    <span class="text-sm font-medium text-gray-900">{{ tech.label }}</span>
-                </label>
-                </li>
-            </ul>
-        </div>
-
 
         <div class="grid grid-cols-2">
 
@@ -61,53 +38,52 @@
                 <date-input
                     name="deadline"
                     label="Application Deadline"
-                    v-model="form.deadline"
+                    v-model="form.application_deadline"
+                    :error="form.errors.application_deadline"
                     />
-
             </div>
         </div>
   
         <!-- Salary Range -->
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <Input label="Title" placeholder="Job Title" name="title" required error="name"/>
+            <Input label="Salary" placeholder="Job Salary" 
+            v-model="form.salary" name="salary" type="number" 
+             :error="form.errors.salary"/>
+            
           </div>
-          <div>
-            <Input label="Title" placeholder="Job Title" name="title" required error="name"/>
-          </div>
-        </div>
-  
-        <!-- Experience -->
-        <div>
-            <Input label="Title" placeholder="Job Title" name="title" required error="name"/>
         </div>
   
         <!-- Description -->
          <div>
             <text-area 
-            :modelValue="form.description"
+            v-model="form.description"
             label="Description"
             name="description"
             placeholder="Job Description"
-            error="description"
-            required />
+            :error="form.errors.description"
+             />
         </div> 
   
         <!-- Requirements -->
         <div>
             <text-area 
-            :modelValue="form.requirements"
+            v-model="form.requirements"
             label="Requirements"
             name="requirements"
             placeholder="Job Requirements"
-            error="requirements"
-            required />
+            :error="form.errors.requirements"
+             />
     
         </div>
 
         <!-- skills  -->
         <div>
-            <Tags label="Enter Skills"/>
+            <Tags  label="Add Skills"
+            v-model="form.skills"
+            placeholder="Enter skills"
+            :error="form.errors.skills"
+            />
         </div>
   
         <!-- Submit Button -->
@@ -128,67 +104,39 @@ import Input from '../../Components/UI/Input.vue';
 import Select from '../../Components/UI/Select.vue';
 import Tags from '../../Components/UI/Tags.vue';
 import TextArea from '../../Components/UI/TextArea.vue';
-import Layout from '../../Layouts/layout.vue';
+import Layout from '@/Layouts/layout.vue';
+import { router, useForm } from '@inertiajs/vue3';
 
   export default {
 
+    props:{
+      jobCategories: Array,
+      jobTypes: Array,
+      governorates: Array,
+
+    },
     components:{Tags,Input, Select, TextArea, CheckBox, DateInput},
     layout: Layout,
-    data() {
-      return {
-        form: {
-          title: '',
-          category: '',
-          type: 'Full-time',
-          level: 'Entry',
-          location: '',
-          remote: false,
-          salary_min: '',
-          salary_max: '',
-          experience: '',
-          description: '',
-          requirements: '',
-          logo: null,
-          logoPreview: null,
-        },
-        categories: [
-        { val: 'soft', title: 'Engineering' },
-        { val: 'data', title: 'Data Science' },
-        { val: 'play', title: 'Game Dev' },
-        ], 
-        technologies: [
-      { id: 'vue', value: 'vue', label: 'Vue JS' },
-      { id: 'react', value: 'react', label: 'React' },
-      { id: 'angular', value: 'angular', label: 'Angular' },
-      { id: 'laravel', value: 'laravel', label: 'Laravel' },
-      { id: 'node', value: 'node', label: 'Node.js' },
-      { id: 'django', value: 'django', label: 'Django' },
-      { id: 'flutter', value: 'flutter', label: 'Flutter' },
-      
-    ]
+    setup() {
+    const form = useForm({
+      title: '',
+      job_category_id: '',
+      job_type_id: '',
+      application_deadline: null,
+      governorate_id: null,
+      skills: [],
+      salary: null,
+      description: '',
+      requirements: '',
+    });
 
-    
-      };
+    const submitJob = () => {
+      form.post('/jobs/create');
+    };
+
+    return { form, submitJob };
     },
-    methods: {
-      handleLogoUpload(e) {
-        const file = e.target.files[0];
-        this.form.logo = file;
-        if (file) {
-          this.form.logoPreview = URL.createObjectURL(file);
-        }
-      },
-      submitJob() {
-        // Validation (simplified)
-        if (!this.form.title || !this.form.category || !this.form.description) {
-          alert("Please fill all required fields.");
-          return;
-        }
-  
-        // Submit logic (e.g. Inertia.post or axios)
-        console.log("Submitting job:", this.form);
-      }
-    }
+   
   };
   </script>
   
