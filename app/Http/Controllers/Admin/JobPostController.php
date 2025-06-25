@@ -46,6 +46,6 @@ class JobPostController extends Controller
 
         JobPost::created($request->all());
 
-        return redirect()->route('jobs.index')->with('success', 'Job Posted');
+        return redirect()->route('Admin.jobs.index')->with('success', 'Job Posted');
     }
 }

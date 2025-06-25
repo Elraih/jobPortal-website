@@ -7,9 +7,19 @@ import Footer from './Components/Footer.vue';
 
 
 createInertiaApp({
-    resolve: name => {
+    resolve: async name => {
         const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
-        return pages[`./Pages/${name}.vue`]
+        const page = pages[`./Pages/${name}.vue`]
+
+        if (name.startsWith('Admin/')) {
+            page.default.layout = page.default.layout || (await import('./Layouts/AdminLayout.vue')).default
+        } else if (name.startsWith('Company/')) {
+            page.default.layout = page.default.layout || (await import('./Layouts/CompanyLayout.vue')).default
+        } else {
+            page.default.layout = page.default.layout || (await import('./Layouts/Layout.vue')).default
+        }
+
+        return page
     },
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
