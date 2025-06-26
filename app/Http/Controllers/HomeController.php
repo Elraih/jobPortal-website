@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -11,21 +12,14 @@ class HomeController extends Controller
     public function index(Request $request)
     {
 
-        $search = $request->query('search');
-        $page = $request->query('page');
-
-        $users = User::query()
-            ->when($search, fn($q) => $q->where('email', 'like', "%" . $search ."%"))
-            ->paginate(2)
-            ->appends(['search' => $search]);
-        
-        if($page > $users->lastPage()){
-            return Inertia::location(route('users.index', ['page' => $users->lastPage()]));
+        $query = DB::table('job_posts');
+        if($request->filled('keyword')){
+            $keyword = $request->query('keyword');
+            $query = $query->where('title', 'like', "%{$keyword}%")->get();
         }
-        // dd($request->query());
-        
-        return Inertia::render('home', [
-            'users' => $users,
-        ]);
+
+        $jobs = $query;
+        // $jobs = DB::table('job_posts')->get();
+        dd($jobs);
     }
 }

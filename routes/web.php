@@ -1,20 +1,76 @@
 <?php
 
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\JobPostController as AdminJobPostController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Company\CompanyController as CompanyCompanyController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Company\JobApplicationController as CompanyJobApplicationController;
 use App\Http\Controllers\Company\JobPostController as CompanyJobPostController;
+use App\Http\Controllers\Company\ProfileController as CompanyProfileController;
+use App\Http\Controllers\User\JobApplicationController as UserJobApplicationController;
+use App\Http\Controllers\User\JobPostController as UserJobPostController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobPostController;
+use App\Http\Controllers\User\CompanyController;
+use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // main page for anyone can view 
-Route::get('/', [HomeController::class, 'index'])->name('users.index');
+Route::prefix('/')->middleware('guest')->group(function(){
+    Route::get('/{keyword}', [HomeController::class, 'index'])->name('users.index');
+
+
+    Route::prefix('/jobs')->group(function(){
+
+        Route::get('/', [UserJobPostController::class, 'index'])->name('index');
+        
+        Route::get('/create', [UserJobPostController::class, 'create'])->name('create');
+        
+        Route::post('/create', [UserJobPostController::class, 'store'])->name('store'); 
+
+        Route::get('/{id}', [UserJobPostController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('/job-applications')->group(function(){
+
+        Route::get('/', [UserJobApplicationController::class, 'index'])->name('index');
+        
+        Route::get('/create', [UserJobApplicationController::class, 'create'])->name('create');
+        
+        Route::post('/create', [UserJobApplicationController::class, 'store'])->name('store'); 
+
+        Route::get('/{id}', [UserJobApplicationController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('/company')->group(function(){
+
+        Route::get('/', [CompanyController::class, 'index'])->name('index');
+        
+        Route::get('/create', [CompanyController::class, 'create'])->name('create');
+        
+        Route::post('/create', [CompanyController::class, 'store'])->name('store'); 
+
+        Route::get('/{id}', [CompanyController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('/user')->group(function(){
+
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        
+        Route::get('/create', [ProfileController::class, 'create'])->name('create');
+        
+        Route::post('/create', [ProfileController::class, 'store'])->name('store'); 
+
+        Route::get('/{id}', [ProfileController::class, 'show'])->name('show');
+    });
+
+});
 
 //auth route 
 Route::prefix('auth')->group(function(){
@@ -55,24 +111,24 @@ Route::prefix('admin')->group(function(){
 
     Route::prefix('/company')->group(function(){
 
-        Route::get('/', [JobPostController::class, 'index'])->name('index');
+        Route::get('/', [AdminCompanyController::class, 'index'])->name('index');
         
-        Route::get('/create', [JobPostController::class, 'create'])->name('create');
+        Route::get('/create', [AdminCompanyController::class, 'create'])->name('create');
         
-        Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
+        Route::post('/create', [AdminCompanyController::class, 'store'])->name('store'); 
 
-        Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
+        Route::get('/{id}', [AdminCompanyController::class, 'show'])->name('show');
     });
 
     Route::prefix('/user')->group(function(){
 
-        Route::get('/', [JobPostController::class, 'index'])->name('index');
+        Route::get('/', [AdminProfileController::class, 'index'])->name('index');
         
-        Route::get('/create', [JobPostController::class, 'create'])->name('create');
+        Route::get('/create', [AdminProfileController::class, 'create'])->name('create');
         
-        Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
+        Route::post('/create', [AdminProfileController::class, 'store'])->name('store'); 
 
-        Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
+        Route::get('/{id}', [AdminProfileController::class, 'show'])->name('show');
     });
    
 });
@@ -103,171 +159,30 @@ Route::prefix('company')->group(function(){
 
     Route::prefix('/company')->group(function(){
 
-        Route::get('/', [JobPostController::class, 'index'])->name('index');
+        Route::get('/', [CompanyCompanyController::class, 'index'])->name('index');
         
-        Route::get('/create', [JobPostController::class, 'create'])->name('create');
+        Route::get('/create', [CompanyCompanyController::class, 'create'])->name('create');
         
-        Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
+        Route::post('/create', [CompanyCompanyController::class, 'store'])->name('store'); 
 
-        Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
+        Route::get('/{id}', [CompanyCompanyController::class, 'show'])->name('show');
     });
 
     Route::prefix('/user')->group(function(){
 
-        Route::get('/', [JobPostController::class, 'index'])->name('index');
+        Route::get('/', [CompanyProfileController::class, 'index'])->name('index');
         
-        Route::get('/create', [JobPostController::class, 'create'])->name('create');
+        Route::get('/create', [CompanyProfileController::class, 'create'])->name('create');
         
-        Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
+        Route::post('/create', [CompanyProfileController::class, 'store'])->name('store'); 
 
-        Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
-    });
-   
-});
-
-Route::prefix('user')->group(function(){
-
-    Route::prefix('/jobs')->group(function(){
-
-        Route::get('/', [\App\Http\Controllers\User\JobPostController::class, 'index'])->name('index');
-        
-        Route::get('/create', [\App\Http\Controllers\User\JobPostController::class, 'create'])->name('create');
-        
-        Route::post('/create', [\App\Http\Controllers\User\JobPostController::class, 'store'])->name('store'); 
-
-        Route::get('/{id}', [\App\Http\Controllers\User\JobPostController::class, 'show'])->name('show');
-    });
-
-    Route::prefix('/job-applications')->group(function(){
-
-        Route::get('/', [\App\Http\Controllers\User\JobApplicationController::class, 'index'])->name('index');
-        
-        Route::get('/create', [\App\Http\Controllers\User\JobApplicationController::class, 'create'])->name('create');
-        
-        Route::post('/create', [\App\Http\Controllers\User\JobApplicationController::class, 'store'])->name('store'); 
-
-        Route::get('/{id}', [\App\Http\Controllers\User\JobApplicationController::class, 'show'])->name('show');
-    });
-
-    Route::prefix('/company')->group(function(){
-
-        Route::get('/', [JobPostController::class, 'index'])->name('index');
-        
-        Route::get('/create', [JobPostController::class, 'create'])->name('create');
-        
-        Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
-
-        Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
-    });
-
-    Route::prefix('/user')->group(function(){
-
-        Route::get('/', [JobPostController::class, 'index'])->name('index');
-        
-        Route::get('/create', [JobPostController::class, 'create'])->name('create');
-        
-        Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
-
-        Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
+        Route::get('/{id}', [CompanyProfileController::class, 'show'])->name('show');
     });
    
 });
 
 
 
-// job posts route 
-Route::prefix('jobs')->name('jobs.')->group(function(){
 
-    Route::get('/', [JobPostController::class, 'index'])->name('index');
-    
-    Route::get('/create', [JobPostController::class, 'create'])->name('create');
-    
-    Route::post('/create', [JobPostController::class, 'store'])->name('store'); 
-
-    Route::get('/{id}', [JobPostController::class, 'show'])->name('show');
-   
-});
-
-Route::prefix('job-applications')->name('job-applications.')->group(function(){
-
-    Route::get('/', [JobApplicationController::class, 'index'])->name('index');
-
-    Route::post('/store', [JobApplicationController::class, 'store'])->name('store');
-
-});
-
-
-Route::prefix('profile')->name('profile.')->group(function(){
-
-    Route::get('/', [JobApplicationController::class, 'index'])->name('index');
-    
-    Route::post('/store', [JobApplicationController::class, 'store'])->name('store');
-    
-    Route::get('/edit', [JobApplicationController::class, 'edit'])->name('edit');
-    
-    Route::put('/update', [JobApplicationController::class, 'update'])->name('update');
-});
-
-Route::prefix('settings')->name('settings.')->group(function(){
-
-    Route::get('/', [JobApplicationController::class, 'index'])->name('index');
-    
-    Route::post('/store', [JobApplicationController::class, 'store'])->name('store');
-    
-    Route::get('/edit', [JobApplicationController::class, 'edit'])->name('edit');
-    
-    Route::put('/update', [JobApplicationController::class, 'update'])->name('update');
-});
-
-
-Route::get('/job', function () {
-    return Inertia::render('Jobs/Show');
-});
-
-Route::get('/admin', function () {
-    return Inertia::render('Admin/Jobs/Index');
-});
-
-Route::get('/dash', function () {
-    return Inertia::render('Admin/Index');
-});
-
-Route::get('/apply', function () {
-    return Inertia::render('Jobs/apply');
-});
-
-Route::get('/login', function(){
-    return Inertia::render('Auth/Login');
-});
-Route::get('/company', function () {
-    return Inertia::render('Employeer/Profile/Show');
-});
-Route::get('/companycreate', function () {
-    return Inertia::render('Employeer/Profile/Create');
-});
-Route::get('/user', function () {
-    return Inertia::render('User/Profile/Show');
-});
-Route::get('/editskill', function () {
-    return Inertia::render('User/Profile/EditSkills');
-});
-Route::get('/editinfo', function () {
-    return Inertia::render('User/Profile/EditInfo');
-});
-Route::get('/editex', function () {
-    return Inertia::render('User/Profile/EditExperience');
-});
-Route::get('/jobseeker', function () {
-    return Inertia::render('Auth/RegisterJobSeeker');
-});
-
-
-// Route::middleware()->prefix()->group(function(){
-
-
-// });
-
-Route::get('/contact', [ContactController::class, 'create']);
-Route::post('/contact', [ContactController::class, 'store']);
 
 

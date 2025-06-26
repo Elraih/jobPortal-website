@@ -8,7 +8,7 @@
       <!-- Title + See All -->
       <div class="flex items-center justify-between mb-8">
         <h2 class="text-2xl font-bold text-gray-800">Jobs Today</h2>
-        <Link href="/jobs" class="text-blue-600 hover:underline">See All Jobs</Link>
+        <Link v-if="todayJobs" href="/jobs" class="text-blue-600 hover:underline">See All Jobs</Link>
       </div>
 
       <!-- 4x4 Grid -->
@@ -31,7 +31,11 @@
   <!-- jobs by category  -->
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-2xl font-bold text-gray-800 mb-8">Jobs by Category</h2>
+
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-8">Jobs by Category</h2>
+        <Link v-if="categories" href="/jobs" class="text-blue-600 hover:underline">See All Jobs</Link>
+      </div>
 
       <div v-if="categories" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
