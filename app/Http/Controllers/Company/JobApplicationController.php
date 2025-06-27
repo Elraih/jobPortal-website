@@ -14,4 +14,8 @@ class JobApplicationController extends Controller
         $applications = DB::table('job_applications')->get();
         return Inertia::render('Company/JobApplications/Index', compact('applications'));
     }
+
+    public function show(){
+        return Inertia::render('Company/JobApplications/Show');
+    }
 }

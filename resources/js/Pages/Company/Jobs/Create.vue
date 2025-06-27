@@ -1,75 +1,116 @@
 <template>
-    <div class="max-w-3xl mx-auto py-10 px-4">
-      <h1 class="text-2xl font-bold mb-6">Create a New Job</h1>
-  
-      <form @submit.prevent="submit" class="space-y-6">
+  <div class="max-w-4xl mx-auto p-6 bg-white shadow rounded-2xl">
+    <h1 class="text-2xl font-semibold mb-6">Create New Job</h1>
+
+
+    <form @submit.prevent="submitJob" class="space-y-6">
+      <!-- Job Title -->
+      <div>
+        <Input label="Title" v-model="form.title" placeholder="Job Title" name="title" :error="form.errors.title" />
+      </div>
+
+      <!-- Job Category + Type + Level -->
+      <div class="grid md:grid-cols-3 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Title</label>
-          <input v-model="form.title" type="text" class="mt-1 block w-full border-gray-300 rounded" />
-          <p v-if="form.errors.title" class="text-sm text-red-500">{{ form.errors.title }}</p>
+          <Select name="Category" label="Select Job Category" optionTitle="choose a category" :values="jobCategories"
+            labelKey="name" v-model="form.job_category_id" :error="form.errors.job_category_id" />
         </div>
-  
         <div>
-          <label class="block text-sm font-medium text-gray-700">Location</label>
-          <input v-model="form.location" type="text" class="mt-1 block w-full border-gray-300 rounded" />
-          <p v-if="form.errors.location" class="text-sm text-red-500">{{ form.errors.location }}</p>
+          <Select name="Type" label="Select Job Type" optionTitle="choose a Type" :values="jobTypes" labelKey="job_type"
+            v-model="form.job_type_id" :error="form.errors.job_type_id" />
         </div>
-  
         <div>
-          <label class="block text-sm font-medium text-gray-700">Type</label>
-          <select v-model="form.type" class="mt-1 block w-full border-gray-300 rounded">
-            <option disabled value="">Select type</option>
-            <option value="full-time">Full-Time</option>
-            <option value="part-time">Part-Time</option>
-            <option value="contract">Contract</option>
-          </select>
-          <p v-if="form.errors.type" class="text-sm text-red-500">{{ form.errors.type }}</p>
+          <Select name="Governorate" label="Select Location" optionTitle="choose a Location" :values="governorates"
+            labelKey="name" v-model="form.governorate_id" :error="form.errors.governorate_id" />
         </div>
-  
+
+      </div>
+
+
+      <div class="grid grid-cols-2">
+
         <div>
-          <label class="block text-sm font-medium text-gray-700">Status</label>
-          <select v-model="form.status" class="mt-1 block w-full border-gray-300 rounded">
-            <option value="draft">Draft</option>
-            <option value="open">Open</option>
-            <option value="closed">Closed</option>
-          </select>
-          <p v-if="form.errors.status" class="text-sm text-red-500">{{ form.errors.status }}</p>
+          <date-input name="deadline" label="Application Deadline" v-model="form.application_deadline"
+            :error="form.errors.application_deadline" />
         </div>
-  
+      </div>
+
+      <!-- Salary Range -->
+      <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Description</label>
-          <textarea v-model="form.description" rows="5" class="mt-1 block w-full border-gray-300 rounded"></textarea>
-          <p v-if="form.errors.description" class="text-sm text-red-500">{{ form.errors.description }}</p>
+          <Input label="Salary" placeholder="Job Salary" v-model="form.salary" name="salary" type="number"
+            :error="form.errors.salary" />
+
         </div>
-  
-        <div>
-          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded">
-            Create Job
-          </button>
-        </div>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  import { useForm } from '@inertiajs/vue3';
-  
-  export default {
-    setup() {
-      const form = useForm({
-        title: '',
-        location: '',
-        type: '',
-        status: 'draft',
-        description: '',
-      })
-  
-      const submit = () => {
-        form.post(route('company.jobs.store'))
-      }
-  
-      return { form, submit }
-    }
-  }
-  </script>
-  
+      </div>
+
+      <!-- Description -->
+      <div>
+        <text-area v-model="form.description" label="Description" name="description" placeholder="Job Description"
+          :error="form.errors.description" />
+      </div>
+
+      <!-- Requirements -->
+      <div>
+        <text-area v-model="form.requirements" label="Requirements" name="requirements" placeholder="Job Requirements"
+          :error="form.errors.requirements" />
+
+      </div>
+
+      <!-- skills  -->
+      <div>
+        <Tags label="Add Skills" v-model="form.skills" placeholder="Enter skills" :error="form.errors.skills" />
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-right">
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition">
+          Publish Job
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import CheckBox from '@/Components/UI/CheckBox.vue';
+import DateInput from '@/Components/UI/DateInput.vue';
+import Input from '@/Components/UI/Input.vue';
+import Select from '@/Components/UI/Select.vue';
+import Tags from '@/Components/UI/Tags.vue';
+import TextArea from '@/Components/UI/TextArea.vue';
+
+import { router, useForm } from '@inertiajs/vue3';
+
+export default {
+
+  props: {
+    jobCategories: Array,
+    jobTypes: Array,
+    governorates: Array,
+
+  },
+  components: { Tags, Input, Select, TextArea, CheckBox, DateInput },
+
+  setup() {
+    const form = useForm({
+      title: '',
+      job_category_id: '',
+      job_type_id: '',
+      application_deadline: null,
+      governorate_id: null,
+      skills: [],
+      salary: null,
+      description: '',
+      requirements: '',
+    });
+
+    const submitJob = () => {
+      form.post('/jobs/create');
+    };
+
+    return { form, submitJob };
+  },
+
+};
+</script>

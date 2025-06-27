@@ -67,7 +67,7 @@
 <script>
 
 // import layout from '../Layouts/layout.vue';
-import heroSection from '../Components/Hero/hero.vue';
+import heroSection from '../Components/Hero/Hero.vue';
 // import Footer from '../Components/footer.vue';
 
 export default {

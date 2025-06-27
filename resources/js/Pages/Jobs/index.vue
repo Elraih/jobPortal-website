@@ -1,32 +1,29 @@
-
 <template>
-    <section class="max-w-7xl mx-auto px-4 py-6">
-      <!-- Top: Search bar -->
-      <div class="flex flex-col md:flex-row justify-center md:items-center gap-4 mb-6">
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Search jobs..."
-          class="w-full md:w-1/2 p-3 rounded-lg border border-gray-300"
-        />
-        <button @click="searchJobs" class="bg-blue-600 text-white px-5 py-2 rounded-lg">
-          Search
-        </button>
-        <!-- Small screen: Dropdown Filter button -->
-        <button @click="toggleMobileFilter" class="md:hidden text-blue-600 underline">
-          Filters
-        </button>
-      </div>
-  
-      <!-- Main layout -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <!-- Sidebar filters -->
-    
-        <filter-sidebar />
-  
-        <!-- Job Listings -->
-        <div class="md:col-span-3 space-y-6">
-          <!-- <div v-for="job in filteredJobs" :key="job.id" class="bg-white shadow rounded-lg p-5 flex items-start justify-between">
+  <section class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Top: Search bar -->
+    <!-- <div class="flex flex-col md:flex-row justify-center md:items-center gap-4 mb-6">
+      <input v-model="search" type="text" placeholder="Search jobs..."
+        class="w-full md:w-1/2 p-3 rounded-lg border border-gray-300" />
+      <button @click="searchJobs" class="bg-blue-600 text-white px-5 py-2 rounded-lg">
+        Search
+      </button> -->
+    <!-- Small screen: Dropdown Filter button -->
+    <!-- <button @click="toggleMobileFilter" class="md:hidden text-blue-600 underline">
+        Filters
+      </button>
+    </div> -->
+
+    <hero-search></hero-search>
+
+    <!-- Main layout -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <!-- Sidebar filters -->
+
+      <filter-sidebar />
+
+      <!-- Job Listings -->
+      <div class="md:col-span-3 space-y-6">
+        <!-- <div v-for="job in filteredJobs" :key="job.id" class="bg-white shadow rounded-lg p-5 flex items-start justify-between">
             <div>
               <h3 class="text-xl font-bold text-blue-700">{{ job.title }}</h3>
               <p class="text-sm text-gray-600">{{ job.company }} - {{ job.location }}</p>
@@ -39,110 +36,102 @@
             <img :src="job.logo" alt="Logo" class="w-16 h-16 object-contain" />
           </div> -->
 
-          <JobCard
-        v-for="job in jobs"
-        :key="job.id"
-        :title="job.title"
-        :company="job.company"
-        :type="job.type"
-        :experience="job.experience"
-        :mode="job.mode"
-        :src="job.logo"
-        :alt="job.company"
-        />
-        </div>
+        <JobCard v-for="job in jobs" :key="job.id" :title="job.title" :company="job.company" :type="job.type"
+          :experience="job.experience" :mode="job.mode" :src="job.logo" :alt="job.company" />
       </div>
-    </section>
+    </div>
+  </section>
 </template>
-  
+
 <script>
-  import FilterSidebar from '../../Components/filterSidebar.vue';
+import FilterSidebar from '../../Components/filterSidebar.vue';
 import JobCard from '../../Components/JobCard.vue';
 import layout from '../../Layouts/layout.vue';
+import HeroSearch from '@/Components/Hero/HeroSearch.vue';
 export default {
 
-    components:{
-      FilterSidebar, JobCard
-    },
-    layout : layout,
-    data() {
-      return {
-        search: '',
-        showFilter: false,
-        filters: {
-          location: [
-            { label: 'Cairo', value: 'Cairo' },
-            { label: 'Alexandria', value: 'Alexandria' }
-          ],
-          level: [
-            { label: 'Entry', value: 'Entry' },
-            { label: 'Senior', value: 'Senior' }
-          ],
-          type: [
-            { label: 'Full Time', value: 'Full Time' },
-            { label: 'Part Time', value: 'Part Time' }
-          ]
-        },
-        selectedFilters: {
-          location: [],
-          level: [],
-          type: []
-        },
-        jobs: [
-          {
-            id: 1,
-            title: 'Software Tester (QA Engineer)',
-            company: 'LoadServ',
-            location: 'Cairo, Egypt',
-            experience: '2-4 Yrs',
-            type: 'Full Time',
-            mode: 'On-site',
-            logo: '/img/company1.png'
-          },
-          {
-            id: 2,
-            title: 'Printing Engineer',
-            company: 'Diamond Alliance Services',
-            location: 'Kano, Nigeria',
-            experience: '5+ Yrs',
-            type: 'Full Time',
-            mode: 'On-site',
-            logo: '/img/company2.png'
-          }
+  components: {
+    FilterSidebar, JobCard, HeroSearch,
+  },
+  layout: layout,
+  data() {
+    return {
+      search: '',
+      showFilter: false,
+      filters: {
+        location: [
+          { label: 'Cairo', value: 'Cairo' },
+          { label: 'Alexandria', value: 'Alexandria' }
+        ],
+        level: [
+          { label: 'Entry', value: 'Entry' },
+          { label: 'Senior', value: 'Senior' }
+        ],
+        type: [
+          { label: 'Full Time', value: 'Full Time' },
+          { label: 'Part Time', value: 'Part Time' }
         ]
-      };
-    },
-    computed: {
-      isDesktop() {
-        return window.innerWidth >= 768;
       },
-      filteredJobs() {
-        return this.jobs.filter(job => {
-          const matchSearch = job.title.toLowerCase().includes(this.search.toLowerCase());
-          const matchLocation = !this.selectedFilters.location.length || this.selectedFilters.location.includes(job.location);
-          const matchLevel = !this.selectedFilters.level.length || this.selectedFilters.level.includes(job.experience.split(' ')[0]);
-          const matchType = !this.selectedFilters.type.length || this.selectedFilters.type.includes(job.type);
-          return matchSearch && matchLocation && matchLevel && matchType;
-        });
-      }
-    },
-    methods: {
-      searchJobs() {
-        // Placeholder if using backend
-        console.log('Searching:', this.search);
+      selectedFilters: {
+        location: [],
+        level: [],
+        type: []
       },
-      toggleMobileFilter() {
-        this.showFilter = !this.showFilter;
-      }
+      jobs: [
+        {
+          id: 1,
+          title: 'Software Tester (QA Engineer)',
+          company: 'LoadServ',
+          location: 'Cairo, Egypt',
+          experience: '2-4 Yrs',
+          type: 'Full Time',
+          mode: 'On-site',
+          logo: '/img/company1.png'
+        },
+        {
+          id: 2,
+          title: 'Printing Engineer',
+          company: 'Diamond Alliance Services',
+          location: 'Kano, Nigeria',
+          experience: '5+ Yrs',
+          type: 'Full Time',
+          mode: 'On-site',
+          logo: '/img/company2.png'
+        }
+      ]
+    };
+  },
+  computed: {
+    isDesktop() {
+      return window.innerWidth >= 768;
+    },
+    filteredJobs() {
+      return this.jobs.filter(job => {
+        const matchSearch = job.title.toLowerCase().includes(this.search.toLowerCase());
+        const matchLocation = !this.selectedFilters.location.length || this.selectedFilters.location.includes(job.location);
+        const matchLevel = !this.selectedFilters.level.length || this.selectedFilters.level.includes(job.experience.split(' ')[0]);
+        const matchType = !this.selectedFilters.type.length || this.selectedFilters.type.includes(job.type);
+        return matchSearch && matchLocation && matchLevel && matchType;
+      });
     }
-  };
+  },
+  methods: {
+    searchJobs() {
+      // Placeholder if using backend
+      console.log('Searching:', this.search);
+    },
+    toggleMobileFilter() {
+      this.showFilter = !this.showFilter;
+    }
+  }
+};
 </script>
 
-   
-  
-  
-  
-  
+
+
+
+
+
 
 
 <!-- <script>

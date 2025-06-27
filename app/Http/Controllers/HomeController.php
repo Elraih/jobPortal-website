@@ -20,6 +20,7 @@ class HomeController extends Controller
 
         $jobs = $query;
         // $jobs = DB::table('job_posts')->get();
-        dd($jobs);
+        // dd($jobs);
+        return Inertia::render('home');
     }
 }

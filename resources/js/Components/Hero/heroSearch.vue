@@ -3,7 +3,7 @@
 
   <form @submit.prevent="submitSearch" class="flex flex-col md:flex-row gap-4 justify-center text-white">
     <input v-model="form.keyword" type="text" placeholder="Job title, keywords..."
-      class="w-full md:w-1/3 px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      class="w-full md:w-1/3 px-4 text-black py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
     <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
       Search
     </button>
@@ -23,7 +23,10 @@ export default {
     });
 
     const submitSearch = () => {
-      router.get('/jobs', { keyword: form.keyword });
+      if (form.keyword != '') {
+
+        router.get('/user/jobs', { keyword: form.keyword });
+      }
 
     }
     return { form, submitSearch };

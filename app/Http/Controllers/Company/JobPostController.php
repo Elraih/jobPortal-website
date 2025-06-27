@@ -27,7 +27,7 @@ class JobPostController extends Controller
         $jobCategories = DB::table('job_categories')->get();
         $jobTypes = DB::table('job_types')->get();
         $governorates = DB::table('governorates')->get();
-        return Inertia::render('Jobs/Create', compact('jobCategories', 'jobTypes', 'governorates'));
+        return Inertia::render('Company/Jobs/Create', compact('jobCategories', 'jobTypes', 'governorates'));
     }
     public function store(Request $request)
     {
