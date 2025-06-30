@@ -13,12 +13,26 @@ class JobPostController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Company/Jobs/Index');
+
+        $jobs = JobPost::get();
+        return Inertia::render('Company/Jobs/Index', 
+        [
+            'jobs' => $jobs
+        ]
+    );
     }
 
     public function show($id)
     {
         return Inertia::render('Company/Jobs/Show');
+    }
+
+    public function edit()
+    {
+        $job = JobPost::get();
+        return Inertia::render('Company/Jobs/Edit', [
+            'job' => $job
+        ]);
     }
 
     public function create()
@@ -44,8 +58,10 @@ class JobPostController extends Controller
             'skills' => ['required'],
         ]);
 
+        
+
         JobPost::created($request->all());
 
-        return redirect()->route('jobs.index')->with('success', 'Job Posted');
+        return redirect()->route('company.jobs.index')->with('success', 'Job Posted');
     }
 }

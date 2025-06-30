@@ -1,24 +1,12 @@
 <template>
   <section class="max-w-7xl mx-auto px-4 py-6">
     <!-- Top: Search bar -->
-    <!-- <div class="flex flex-col md:flex-row justify-center md:items-center gap-4 mb-6">
-      <input v-model="search" type="text" placeholder="Search jobs..."
-        class="w-full md:w-1/2 p-3 rounded-lg border border-gray-300" />
-      <button @click="searchJobs" class="bg-blue-600 text-white px-5 py-2 rounded-lg">
-        Search
-      </button> -->
-    <!-- Small screen: Dropdown Filter button -->
-    <!-- <button @click="toggleMobileFilter" class="md:hidden text-blue-600 underline">
-        Filters
-      </button>
-    </div> -->
-
-    <hero-search></hero-search>
+    <hero-search :textColor="'text-black'"></hero-search>
 
     <!-- Main layout -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <!-- Sidebar filters -->
 
+      <!-- Sidebar filters -->
       <filter-sidebar />
 
       <!-- Job Listings -->
@@ -44,9 +32,9 @@
 </template>
 
 <script>
-import FilterSidebar from '../../Components/filterSidebar.vue';
-import JobCard from '../../Components/JobCard.vue';
-import layout from '../../Layouts/layout.vue';
+import FilterSidebar from '@/Components/filterSidebar.vue';
+import JobCard from '@/Components/JobCard.vue';
+import layout from '@/Layouts/layout.vue';
 import HeroSearch from '@/Components/Hero/HeroSearch.vue';
 export default {
 

@@ -12,10 +12,16 @@ class JobApplicationController extends Controller
     public function index()
     {
         $applications = DB::table('job_applications')->get();
-        return Inertia::render('Company/JobApplications/Index', compact('applications'));
+        return Inertia::render('Company/JobApplications/Index', 
+        ['applications' => $applications]
+    );
     }
 
     public function show(){
-        return Inertia::render('Company/JobApplications/Show');
+        $application = DB::table('job_applications')->get();
+
+        return Inertia::render('Company/JobApplications/Show', [
+            'application' => $application,
+        ]);
     }
 }

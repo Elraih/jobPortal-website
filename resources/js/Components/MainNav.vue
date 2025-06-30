@@ -27,7 +27,7 @@
           Job</Link>
         </li>
         <li>
-          <Link :href="route('auth.registerAsJobseeker')" class="hover:text-blue-400 px-2 py-1 border-1 border-solid">
+          <Link :href="route('auth.registerAsJobSeeker')" class="hover:text-blue-400 px-2 py-1 border-1 border-solid">
           Looking
           For a Job</Link>
         </li>
@@ -58,7 +58,7 @@
           <Link :href="route('auth.registerAsCompany')" class="hover:text-blue-600">Share A Job</Link>
         </li>
         <li>
-          <Link :href="route('auth.registerAsJobseeker')" class="hover:text-blue-600">Looking For a Job</Link>
+          <Link :href="route('auth.registerAsJobSeeker')" class="hover:text-blue-600">Looking For a Job</Link>
         </li>
       </ul>
     </div>

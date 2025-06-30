@@ -11,41 +11,28 @@ use Inertia\Inertia;
 
 class JobPostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Jobs/Index');
+        
+        $jobTypes = DB::table('job_types')->get();
+        
+
+        $filters =$request->only(['keyword']);
+        
+        $jobs = JobPost::filter($filters)->get();
+        
+        return Inertia::render('User/Jobs/Index', 
+        [
+            'jobtypes' => $jobTypes,
+            'jobs' => $jobs,
+        ]
+    );
     }
 
     public function show($id)
     {
-        return Inertia::render('Jobs/Show');
+        return Inertia::render('User/Jobs/Show');
     }
 
-    public function create()
-    {
-        
-        $jobCategories = DB::table('job_categories')->get();
-        $jobTypes = DB::table('job_types')->get();
-        $governorates = DB::table('governorates')->get();
-        return Inertia::render('Jobs/Create', compact('jobCategories', 'jobTypes', 'governorates'));
-    }
-    public function store(Request $request)
-    {
-
-        $validated = $request->validate( [
-            'title' => ['required'],
-            'job_category_id' => ['required'],
-            'job_type_id' => ['required'],
-            'governorate_id' => ['required'],
-            'salary' => ['required'],
-            'application_deadline' => ['required'],
-            'description' => ['required'],
-            'requirements' => ['required'],
-            'skills' => ['required'],
-        ]);
-
-        JobPost::created($request->all());
-
-        return redirect()->route('jobs.index')->with('success', 'Job Posted');
-    }
+    
 }

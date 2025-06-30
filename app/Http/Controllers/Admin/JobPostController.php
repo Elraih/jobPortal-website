@@ -21,31 +21,6 @@ class JobPostController extends Controller
         return Inertia::render('Admin/Jobs/Show');
     }
 
-    public function create()
-    {
-        
-        $jobCategories = DB::table('job_categories')->get();
-        $jobTypes = DB::table('job_types')->get();
-        $governorates = DB::table('governorates')->get();
-        return Inertia::render('Jobs/Create', compact('jobCategories', 'jobTypes', 'governorates'));
-    }
-    public function store(Request $request)
-    {
-
-        $validated = $request->validate( [
-            'title' => ['required'],
-            'job_category_id' => ['required'],
-            'job_type_id' => ['required'],
-            'governorate_id' => ['required'],
-            'salary' => ['required'],
-            'application_deadline' => ['required'],
-            'description' => ['required'],
-            'requirements' => ['required'],
-            'skills' => ['required'],
-        ]);
-
-        JobPost::created($request->all());
-
-        return redirect()->route('Admin.jobs.index')->with('success', 'Job Posted');
-    }
+    
+    
 }

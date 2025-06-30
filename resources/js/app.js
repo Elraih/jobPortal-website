@@ -2,6 +2,8 @@ import './bootstrap';
 import { createApp, h } from 'vue'
 import { createInertiaApp, Link } from '@inertiajs/vue3'
 import { ZiggyVue } from 'ziggy-js';
+// import Ziggy from './ziggy';
+// import { route } from 'ziggy-js';
 import Footer from './Components/Footer.vue';
 
 
