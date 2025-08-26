@@ -18,12 +18,14 @@ return new class extends Migration
             $table->foreignId('job_type_id')->constrained()->cascadeOnDelete();
             $table->foreignId('governorate_id')->constrained()->cascadeOnDelete();
             $table->string('title');
+            $table->string('slug')->unique();
             $table->text('requirements');
             $table->text('description');
             $table->json('skills')->nullable();
             $table->integer('salary')->nullable();
             $table->date('application_deadline')->nullable();
             $table->enum('status', ['open', 'closed', 'draft'])->default('open');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

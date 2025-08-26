@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'job_seeker', 'company'])->default('job_seeker');
             $table->string('password');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 

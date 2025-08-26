@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('company_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('about_us')->nullable();
             $table->string('industry')->nullable();
-            $table->string('website')->nullable();
+            $table->enum('company_size', ['0-50', '51-100', '101-500', '501-1500', '+1500'])->nullable()->default('0-50');
             $table->string('logo')->nullable();
             $table->timestamps();
         });

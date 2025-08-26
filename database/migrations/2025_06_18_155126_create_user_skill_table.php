@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->json('skills');
-            $table->enum('level',['beginner', 'intermediate','proficient','expert']);
-            $table->integer('years_experience')->nullable();
             $table->timestamps();
         });
     }

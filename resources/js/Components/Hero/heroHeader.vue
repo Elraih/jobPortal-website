@@ -1,6 +1,6 @@
 <template>
 
-  <div class="text-white">
+  <div class="text-white pt-15">
     <h1 class="text-4xl font-bold  mb-4">
           Find Your Next Dream Job
         </h1>

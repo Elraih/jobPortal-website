@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('resumes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('path');
+            $table->string('old_resume_name')->nullable();
+            $table->string('resume')->nullable();
             $table->timestamps();
         });
     }

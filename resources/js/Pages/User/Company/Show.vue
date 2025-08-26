@@ -1,62 +1,72 @@
 <template>
-  <div class="max-w-6xl mx-auto py-10 px-4">
-    <!-- Company Info -->
-    <div class="mb-10">
-      <h1 class="text-3xl font-bold text-gray-800">{{ company.name }}</h1>
+  <div class="max-w-6xl mx-auto">
+    <div class="">
+      <!-- Company Info header  and logo-->
+      <div class="flex flex-col md:flex-row justify-between bg-gray-600 py-6 px-4 rounded-md text-white">
+        <div class="order-2 md:order-1 my-3 mx-auto md:mx-0">
+          <h1 class="text-3xl font-bold ">{{ company.company_profile?.name }}</h1>
+          <ul class="text-center md:text-start space-y-2">
+            <li><span class="text-md font-bold me-2">Industry:</span>{{ company.company_profile?.industry }}</li>
+            <li><span class="text-md font-bold me-2">Website:</span>{{ company.contact_info?.website }}</li>
+            <li><span class="text-md font-bold me-2">LinkedIn:</span>{{ company.contact_info?.linkedIn }}</li>
+            <li><span class="text-md font-bold me-2">Location:</span>{{ company.location?.address }}, {{
+              company.location?.governorate?.name }}</li>
+            <li><span class="text-md font-bold me-2">Phone:</span>{{ company.contact_info?.phone }}</li>
+          </ul>
+        </div>
+        <div class="w-30 order-1 md:order-2 mx-auto md:mx-0">
+          <img
+            :src="company.company_profile?.logo ? `/storage/${company.company_profile?.logo}` : '/img/company_default.png'"
+            class="w-30" alt=""></img>
+        </div>
 
-      <div v-if="company.website" class="mt-1">
-        <a :href="company.website" target="_blank" class="text-blue-600 hover:underline text-sm">
-          {{ company.website }}
-        </a>
       </div>
+      <!--end Company Info header  and logo-->
 
-      <div v-if="company.description" class="mt-4 text-gray-700 whitespace-pre-line">
-        {{ company.description }}
+
+      <div class="mt-2 px-3 py-5 rounded-md text-gray-700 bg-white whitespace-pre-line">
+        <h3 class="text-lg text-blue-900 font-bold">About Us</h3>
+        <p v-if="company.company_profile?.about_us">{{ company.company_profile?.about_us }}</p>
       </div>
     </div>
 
-    <!-- Job Listings -->
-    <div>
-      <h2 class="text-2xl font-semibold mb-4">Open Positions</h2>
 
-      <div v-if="!company.jobs.length" class="text-gray-500">This company hasn't posted any jobs yet.</div>
+    <!-- Job posts list -->
+    <div class="my-4">
+      <h2 class="text-xl text-blue-900 font-bold mt-5 mb-1 bg-blue-50 p-3">Open Positions</h2>
+
+      <div v-if="jobPosts.data <= 0" class="text-gray-500">This company hasn't posted any jobs yet.</div>
 
       <div v-else class="space-y-4">
-        <div v-for="job in company.jobs" :key="job.id"
-          class="border rounded p-4 bg-white shadow-sm hover:shadow transition">
-          <h3 class="text-lg font-semibold text-gray-800">
-            <Link :href="`/jobs/${job.id}`" class="hover:underline">
-            {{ job.title }}
-            </Link>
-          </h3>
-          <p class="text-sm text-gray-600">{{ job.location }} • {{ job.type }}</p>
-          <p class="text-xs text-gray-500 mt-1">Posted: {{ formatDate(job.created_at) }}</p>
 
-          <span class="inline-block mt-2 text-xs px-2 py-1 rounded font-medium" :class="{
-            'bg-green-100 text-green-800': job.status === 'open',
-            'bg-yellow-100 text-yellow-800': job.status === 'draft',
-            'bg-red-100 text-red-800': job.status === 'closed',
-          }">
-            {{ job.status }}
-          </span>
-        </div>
+        <!-- job card  -->
+        <JobCard v-for="job in jobPosts.data" :key="job.id" :titleLink="route('user.jobs.show', { slug: job.slug })"
+          :title="job.title" :location="job.governorate.name" :company="company.company_profile.name"
+          :posted_on="job.created_at_human" :category="job.job_category.name" :skills="job.skills"
+          :type="job.job_type.job_type"
+          :src="company.company_profile?.logo ? `/storage/${company.company_profile?.logo}` : '/img/company_default.png'"
+          :alt="'job.company'" />
+        <!-- end job card      -->
+
       </div>
+      <Pagination :pagination="jobPosts" :baseUrl="route('user.company.show', { user: company.id })" />
+
     </div>
+    <!--end Job posts list -->
+
   </div>
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3';
+import JobCard from '@/Components/JobCard.vue';
+import Pagination from '@/Components/Pagination.vue';
+
 
 export default {
+  components: { JobCard, Pagination },
   props: {
     company: Object,
+    jobPosts: Object
   },
-  methods: {
-    formatDate(date) {
-      return new Date(date).toLocaleDateString();
-    },
-  },
-  components: { Link }
 }
 </script>

@@ -1,57 +1,167 @@
 <template>
-  <div class="max-w-3xl mx-auto py-10 px-4">
-    <h1 class="text-2xl font-bold mb-4">Edit Company Profile</h1>
+  <div class="max-w-4xl mx-auto px-4 py-10 space-y-6">
+    <h1 class="text-2xl font-bold text-blue-800">Edit Company Profile</h1>
 
-    <form @submit.prevent="submit" class="bg-white shadow p-6 rounded space-y-6">
+    <!-- start profile edit form  -->
+    <form @submit.prevent="updateCompany" enctype="multipart/form-data"
+      class="bg-white shadow rounded-lg p-6 space-y-6">
+      <!-- Company Info -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Company Name</label>
-        <input v-model="form.name" type="text" class="mt-1 block w-full border-gray-300 rounded" />
-        <p v-if="form.errors.name" class="text-sm text-red-500">{{ form.errors.name }}</p>
-      </div>
+        <h2 class="text-lg font-semibold text-gray-700 mb-2">Basic Information</h2>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Website</label>
-        <input v-model="form.website" type="url" class="mt-1 block w-full border-gray-300 rounded" />
-        <p v-if="form.errors.website" class="text-sm text-red-500">{{ form.errors.website }}</p>
-      </div>
+        <!--  company logo preview and input  -->
+        <div class=" mt-6 contain-content flex flex-col items-center space-y-2">
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">about_us</label>
-        <textarea v-model="form.about_us" rows="5" class="mt-1 block w-full border-gray-300 rounded"></textarea>
-        <p v-if="form.errors.about_us" class="text-sm text-red-500">{{ form.errors.about_us }}</p>
-      </div>
+          <!-- company logo previw  -->
+          <img v-if="logoPreview || this.user.company_profile?.logo"
+            :src="logoPreview || `/storage/${this.user.company_profile?.logo}`" alt="Preview"
+            class="w-16 h-16 rounded-full object-cover border" />
+          <!--end company logo previw  -->
 
-      <div>
-        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">
-          Save Changes
-        </button>
+          <!-- company logo input   -->
+          <div class="flex items-center mb-2 gap-2">
+            <input type="file" @change="handleFileChange" name="logo" class="block text-sm text-gray-500 file:mr-4 max-w-fit rounded-full  bg-gray-50 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              hover:file:bg-blue-100" />
+            <button v-if="logoPreview || this.user.company_profile?.logo" @click.prevent="removeLogo"
+              class="bg-red-500 text-white py-1 px-2 cursor-pointer rounded-full hover:bg-red-700">Remove image</button>
+
+            <small v-if="form.errors.logo" class="mt-2 text-sm  text-red-600 ">{{ form.errors.logo }}</small>
+
+          </div>
+          <!-- end company logo input   -->
+
+        </div>
+        <!-- end company logo preview and input  -->
+
+        <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-4">
+          
+
+            <Input label="Name" v-model="form.name" placeholder="Company Name" name="name" :error="form.errors.name" />
+          
+            <Input label="Industry" v-model="form.industry" placeholder="Job Industry" name="industry"
+              :error="form.errors.industry" />
+          
+            <Select label="Company's Size" :values="companySize" optionTitle="Select Compony's Size"
+              v-model="form.company_size" :error="form.errors.company_size" name="company_size"></Select>
+        </div>
       </div>
+      <!-- end Company Info -->
+
+      <!-- Description -->
+      <div>
+        <text-area v-model="form.about_us" label="About the Company" name="about_us" placeholder="About the Company"
+          :error="form.errors.about_us" />
+      </div>
+      <!--end Description -->
+
+      <!-- Contact Info -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-700 mb-2">Contact Info</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+            <Input label="Phone" type="tel" v-model="form.phone" name="phone" :error="form.errors.phone" placeholder="+2012222222"/>
+          
+          
+            <Select name="Governorate" label="Select Location" optionTitle="choose a Location" :values="governorates"
+              labelKey="name" v-model="form.governorate_id" :error="form.errors.governorate_id" />
+          
+            <Input label="Address" v-model="form.address" name="address" :error="form.errors.address" placeholder="address"/>
+          
+        </div>
+      </div>
+      <!--end Contact Info -->
+
+      <!-- Social Media -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-700 mb-2">Social Media</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+         
+            <Input label="LinkedIn" type="url" v-model="form.linkedin" name="linkedin" :error="form.errors.linkedin" placeholder="ex: www.website.com/in."/>
+          
+            <Input label="Website" type="url" v-model="form.website" name="website" :error="form.errors.website" placeholder="ex: www.website.com/in."/>
+
+        </div>
+      </div>
+        <!--end Social Media -->
+
+
+      <button type="submit"
+        class="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer mx-3 py-1 px-2 rounded-lg">Save Company
+        Profile</button>
+      <button type="button" class="bg-red-500 text-white hover:bg-red-600 cursor-pointer mx-3 py-1 px-2 rounded-lg"
+        @click="cancelSubmit">Cancel</button>
     </form>
+    <!-- end profile edit form  -->
   </div>
 </template>
 
 <script>
+
+import Input from '@/Components/UI/Input.vue';
+import TextArea from '@/Components/UI/Textarea.vue';
+import Select from '@/Components/UI/Select.vue'
 import { useForm } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 
 
 export default {
+
+  components: { Input, TextArea, Select },
   props: {
-    company: [Object, Array],
+    user: Object,
+    governorates: Array,
+    companySize: Object,
   },
-  setup(props) {
-    const form = useForm({
-      name: props.company.name || '',
-      website: props.company.website || '',
-      description: props.company.about_us || '',
-    })
+  data() {
+    return {
+      logoPreview: null,
+      form: useForm({
+        name: this.user.company_profile?.name || '',
+        industry: this.user.company_profile?.industry || '',
+        website: this.user.contact_info?.website || '',
+        about_us: this.user.company_profile?.about_us || '',
+        phone: this.user.contact_info?.phone || '',
+        governorate_id: this.user.location?.governorate.id || '',
+        address: this.user.location?.address || '',
+        linkedin: this.user.contact_info?.linkedIn || '',
+        company_size: this.user.company_profile?.company_size || '',
+        logo: null,
+      }),
+    }
+  },
+  methods: {
 
-    const submit = () => {
-      // form.put(route('company.profile.update'))
-      form.post('/jobs/create');
+    updateCompany() {
+      // Send form data to the backend
+      console.log(this.form.company_size);
+      this.form.post(route('company.profile.update', this.user), { forceFormData: true, });
+    },
 
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.form.logo = file;
+        // For preview
+        this.logoPreview = URL.createObjectURL(file);
+      }
+    },
+
+    cancelSubmit() {
+      this.$inertia.get(route('company.profile.show', { user: this.user }));
+    },
+
+    removeLogo() {
+      if (this.logoPreview) {
+        this.logoPreview = null;
+
+      } else if (this.user.company_profile.logo) {
+        this.$inertia.delete(route('company.profile.deleteLogo', { user: this.user }));
+      }
     }
 
-    return { form, submit }
-  },
-}
+  }
+};
 </script>

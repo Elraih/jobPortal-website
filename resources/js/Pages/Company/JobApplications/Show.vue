@@ -2,6 +2,7 @@
   <div class="max-w-3xl mx-auto py-10 px-4">
     <h1 class="text-2xl font-bold mb-4">Application Details</h1>
 
+  
     <!-- <div class="bg-white shadow rounded p-5 space-y-4">
         <div>
           <h2 class="text-lg font-semibold">{{ application.user.name }}</h2>

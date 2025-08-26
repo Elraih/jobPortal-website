@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('educations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->enum('degree', ['high_school_diploma',
-                'associates_degree',
-                'bachelors_degree',
-                'masters_degree',
-                'doctoral_degree'
-            ])->default('bachelors_degree');
+            $table->enum('degree', ['high school diploma',
+                'associates degree',
+                'bachelors degree',
+                'masters degree',
+                'doctoral degree'
+            ])->default('bachelors degree');
             $table->string('major');
             $table->string('school_name');
             $table->date('start_date');

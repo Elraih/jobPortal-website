@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('phone')->unique();
-            
+            $table->string('website')->nullable()->unique();
+            $table->string('linkedIn')->nullable()->unique();
             $table->timestamps();
         });
     }

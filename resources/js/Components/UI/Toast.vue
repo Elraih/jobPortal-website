@@ -1,9 +1,10 @@
 <!-- components/UI/Toast.vue -->
 <template>
     <transition name="fade">
-        <div v-if="visible" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+        <div v-if="visible && message" :class="classType" class="fixed top-10 right-6 text-white px-4 py-2 rounded shadow-lg z-50">
             {{ message }}
         </div>
+        
     </transition>
 </template>
 
@@ -15,15 +16,23 @@ export default {
             type: String,
             required: true,
         },
+        type:{
+            type: String
+        },
         duration: {
             type: Number,
-            default: 3000, // 3 seconds
+            default: 5000, // 3 seconds
         },
     },
     data() {
         return {
             visible: false,
         };
+    },
+    computed:{
+        classType(){
+            return this.type == 'success' ? 'bg-green-500' : 'bg-red-500';
+        }
     },
     watch: {
         message: {

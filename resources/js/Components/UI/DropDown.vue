@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="">
       <button
         @click="toggle"
-        class="bg-blue-100 hover:bg-blue-200 w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-left text-gray-700 rounded"
+        class="bg-blue-100 hover:bg-blue-200 w-full flex items-center cursor-pointer justify-between px-4 py-2 text-sm font-medium text-left text-gray-700 rounded"
       >
         <span class="flex items-center gap-2">{{ label }}</span>
         <svg
@@ -17,7 +17,7 @@
       </button>
   
       <transition name="fade">
-        <div v-if="open" class="ml-4 mt-2 space-y-1">
+        <div v-if="open" class="p-3 rounded-b-md space-y-1 bg-gray-100">
           <slot />
         </div>
       </transition>

@@ -1,58 +1,66 @@
 <template>
-  <section class="min-h-screen flex items-center">
-    <div class="max-w-md w-full mx-auto px-4 py-8">
+  <section class="min-h-screen max-w-md w-full mx-auto px-4 py-8">
+    <!-- link to home page  -->
+    <div class="text-white text-center mb-6">
+      <Link :href="route('home')" class="text-2xl font-bold">JobSite</Link>
+    </div>
 
-      <div class="text-white text-center mb-6">
-        <Link :href="route('home')" class="text-2xl font-bold">JobSite</Link>
+    <!-- start login form  -->
+    <form @submit.prevent="login()" class="bg-white p-6 rounded-lg shadow-lg">
+      <h1 class="text-2xl font-semibold text-blue-900 mb-4 text-center">Login to Your Account</h1>
+
+      <div class="space-y-4">
+        <div>
+          <Input v-model="form.email" :error="form.errors.email" label="Email Address" type="email" name="email"
+            placeholder="you@example.com" />
+        </div>
+        <div>
+          <Input v-model="form.password" :error="form.errors.password" label="Password" type="password" name="password"
+            placeholder="••••••••" />
+        </div>
       </div>
 
-      <form @submit.prevent="login()" class="bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Login to Your Account</h2>
+      <button type="submit"
+        class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition">Login</button>
 
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-            <input v-model="form.email" type="email" placeholder="you@example.com"
-              class="w-full p-2.5 border rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input v-model="form.password" type="password" placeholder="••••••••"
-              class="w-full p-2.5 border rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" required>
-          </div>
-        </div>
 
-        <button type="submit"
-          class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition">Login</button>
 
-        <div class="mt-6 text-sm text-center text-gray-600 space-y-1">
-          <p>
-            <Link class="text-blue-600 hover:underline">Forgot your password?</Link>
-          </p>
-          <p>
-            Don’t have an account?
-            <Link :href="route('auth.registerAsJobSeeker')" class="text-blue-600 hover:underline ml-1">Register</Link>
-          </p>
-          <p>
-            Are you a company?
-            <Link :href="route('auth.registerAsCompany')" class="text-blue-600 hover:underline ml-1">Register your
-            company</Link>
-          </p>
-        </div>
-      </form>
-    </div>
+      <!-- forget pwd , register jobseeker, employeer Link  -->
+      <div class="mt-6 text-sm text-center text-gray-600 space-y-1">
+
+        <Link :href="route('password.reset')" class="text-blue-600 hover:underline">Forgot your password?</Link>
+
+        <p>
+          Don’t have an account?
+          <Link :href="route('registerAsJobSeeker')" class="text-blue-600 hover:underline ml-1">Register</Link>
+        </p>
+
+        <p>
+          Are you a company?
+          <Link :href="route('registerAsCompany')" class="text-blue-600 hover:underline ml-1">Register your
+          company</Link>
+        </p>
+
+      </div>
+      <!--end of forget pwd , register jobseeker, employeer Link  -->
+
+    </form>
+    <!-- end login form  -->
+
   </section>
 </template>
 
 
 <script>
-import { reactive } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import AuthLayout from '../../Layouts/AuthLayout.vue'
 import { route } from 'ziggy-js'
+import Input from '@/Components/UI/Input.vue'
 
 export default {
   layout: AuthLayout,
+  components: { Input },
+
   setup() {
     const form = useForm({
       email: '',
@@ -61,10 +69,11 @@ export default {
 
     function login() {
 
-      form.post('/auth/login')
+      form.post(route('login'));
       form.password = '';
 
     }
+
 
     return { form, login }
   }

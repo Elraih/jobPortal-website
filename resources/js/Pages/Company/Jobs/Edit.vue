@@ -13,7 +13,7 @@
       <div class="grid md:grid-cols-3 gap-4">
         <div>
           <Select name="Category" label="Select Job Category" optionTitle="choose a category" :values="jobCategories"
-            labelKey="name" v-model="form.job_category_id" :error="form.errors.job_category_id" />
+            labelKey="name"  v-model="form.job_category_id" :error="form.errors.job_category_id" />
         </div>
         <div>
           <Select name="Type" label="Select Job Type" optionTitle="choose a Type" :values="jobTypes" labelKey="job_type"
@@ -84,29 +84,35 @@ import { router, useForm } from '@inertiajs/vue3';
 
 export default {
 
+
+  mounted(){
+    console.log(this.job);
+    
+  },
   props: {
     jobCategories: Array,
     jobTypes: Array,
     governorates: Array,
+    job: Object,
 
   },
   components: { Tags, Input, Select, TextArea, CheckBox, DateInput },
 
-  setup() {
+  setup(props) {
     const form = useForm({
-      title: '',
-      job_category_id: '',
-      job_type_id: '',
-      application_deadline: null,
-      governorate_id: null,
-      skills: [],
-      salary: null,
-      description: '',
-      requirements: '',
+      title: props.job.title,
+      job_category_id: props.job.job_category_id,
+      job_type_id: props.job.job_type_id,
+      application_deadline: props.job.application_deadline,
+      governorate_id: props.job.governorate_id,
+      skills: props.job.skills,
+      salary: props.job.salary,
+      description: props.job.description,
+      requirements: props.job.requirements,
     });
 
     const submitJob = () => {
-      form.post('/jobs/create');
+      form.put(`/company/jobs/${props.job.id}/update`);
     };
 
     return { form, submitJob };

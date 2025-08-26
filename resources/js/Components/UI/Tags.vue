@@ -1,7 +1,7 @@
 <!-- resources/js/Components/Form/TagInput.vue -->
 <template>
-  <label for="" class="block mb-2 text-sm font-medium text-gray-900 ">{{ label }}</label>
-  <input ref="tagInputRef" :value="modelValue" />
+  <label :for="name" class="block mb-2 text-sm font-medium text-gray-900 ">{{ label }}</label>
+  <input ref="tagInputRef"  :id="name" :autocomplete="autocomplete"/>
   <small v-if="error" class="mt-2 text-sm  text-red-600 ">{{ error }}</small>
 
 </template>
@@ -14,8 +14,10 @@ export default {
   name: 'TagInput',
   props: {
     error: String,
+    name:{type: String, default: ''},
+    autocomplete: {type:String, default: 'off'},
     modelValue: {
-      type: [String, Array],
+      type: [Array],
       default: () => [],
     },
     whitelist: {

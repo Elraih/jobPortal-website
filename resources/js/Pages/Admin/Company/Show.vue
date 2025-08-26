@@ -1,54 +1,84 @@
 <template>
-    <div class="max-w-6xl mx-auto py-10 px-4">
-      <h1 class="text-2xl font-bold mb-4">Company: {{ company.name }}</h1>
+      <div class="max-w-6xl mx-auto">
+    <div class="">
+      <!-- Company Info header -->
+
+        <div class="flex flex-col md:flex-row justify-between bg-gray-600 py-6 px-4 rounded-md text-white">
+          <div class="order-2 md:order-1 my-3 mx-auto md:mx-0">
+              <h1 class="text-3xl font-bold ">{{ company.company_profile?.name }}</h1>
+            <ul class="text-center md:text-start space-y-2">
+              <li><span class="text-md font-bold me-2">Industry:</span>{{company.company_profile?.industry}}</li>
+              <li><span class="text-md font-bold me-2">Website:</span>{{ company.contact_info?.website }}</li>
+              <li><span class="text-md font-bold me-2">LinkedIn:</span>{{ company.contact_info?.linkedIn }}</li> 
+              <li><span class="text-md font-bold me-2">Location:</span>{{ company.location?.adress }}, {{ company.location?.governorate.name }}</li> 
+              <li><span class="text-md font-bold me-2">Phone:</span>{{ company.contact_info?.phone }}</li> 
+            </ul>
+          </div>
+          <div class="w-30 order-1 md:order-2 mx-auto md:mx-0">
+            <img src="/public/img/company_default.png" class="w-30" alt=""></img>
+          </div>
   
-      <div v-if="company.website" class="mb-4">
-        <a :href="company.website" class="text-blue-600 hover:underline" target="_blank">
-          {{ company.website }}
-        </a>
+        </div>
+      
+        <div class="mt-2 px-3 py-5 rounded-md text-gray-700 bg-white whitespace-pre-line">
+        <h3 class="text-lg font-bold">About Us</h3>
+        <p v-if="company.company_profile?.about_us">{{ company.company_profile?.about_us }}</p>
       </div>
-  
-      <div v-if="company.description" class="mb-6 text-gray-700">
-        <p>{{ company.description }}</p>
-      </div>
-  
-      <h2 class="text-xl font-semibold mb-2">Jobs Posted</h2>
-      <div v-if="!company.jobs.length" class="text-gray-500">No jobs posted.</div>
-  
-      <ul v-else class="space-y-2">
-        <li
-          v-for="job in company.jobs"
-          :key="job.id"
-          class="p-4 border bg-white rounded shadow-sm"
-        >
-          <h3 class="text-lg font-medium">{{ job.title }}</h3>
-          <p class="text-sm text-gray-500">
-            {{ job.location }} • {{ job.type }} • {{ formatDate(job.created_at) }}
-          </p>
-          <span
-            class="inline-block mt-1 text-xs px-2 py-1 rounded font-medium"
-            :class="{
-              'bg-green-100 text-green-800': job.status === 'open',
-              'bg-yellow-100 text-yellow-800': job.status === 'draft',
-              'bg-red-100 text-red-800': job.status === 'closed',
-            }"
-          >
-            {{ job.status }}
-          </span>
-        </li>
-      </ul>
     </div>
+
+    <!-- Job Listings -->
+    <div class="my-4">
+      <h2 class="text-2xl font-semibold my-5">Open Positions</h2>
+
+      <div v-if="jobPosts.data.length <= 0" class="text-gray-500">This company hasn't posted any jobs yet.</div>
+
+      <div v-else class="space-y-4">
+        
+        <Table>
+          <template v-slot:tableHead>
+            <th class="px-4 py-2">Job Title</th>
+            <th class="px-4 py-2">Job Type</th>
+            <th class="px-4 py-2">Governorate</th>
+            <th class="px-4 py-2">Status</th>
+            <th class="px-4 py-2">Number Of Applicants</th>
+          </template>
+
+          <template v-slot:tableBody>
+           <tr v-for="job, index in jobPosts.data">
+            <td class="px-4 py-2"><Link class="text-blue-600 hover:underline" :href="route('admin.jobs.show', {slug:job.slug})" >{{ job.title }}</Link></td>
+            <td class="px-4 py-2">{{ job.job_type.job_type }}</td>
+            <td class="px-4 py-2">{{ job.governorate.name }}</td>
+            <td class="px-4 py-2"><JobPostStatus :status="job.status"/></td>
+            <td class="px-4 py-2">{{ job.job_applications_count }}</td>
+           </tr>
+          </template>
+        </Table>
+                    
+      </div>
+      <Pagination :pagination="jobPosts" :baseUrl="route('admin.company.show', {user: company.id})" />
+
+    </div> 
+  </div>
   </template>
   
-  <script>
+<script>
+  import Pagination from '@/Components/Pagination.vue';
+  import JobPostStatus from '@/Components/JobPostStatus.vue';
+  import Table from '@/Components/UI/Table.vue';
+  
   export default {
+    components:{Pagination, JobPostStatus, Table},
+    mounted(){
+
+      console.log(this.company);
+      
+    },
     props: {
       company: Object,
+      jobPosts: Object,
     },
     methods: {
-      formatDate(date) {
-        return new Date(date).toLocaleDateString()
-      },
+      
     },
   }
   </script>

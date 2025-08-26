@@ -1,72 +1,121 @@
 <template>
-    <div class="max-w-7xl mx-auto py-10 px-4">
-      <h1 class="text-2xl font-bold mb-6">All Job Posts</h1>
+    <div class="max-w-6xl mx-auto py-10 px-4">
+      <h1 class="text-2xl font-bold mb-6">All Jobs</h1>
   
-      <div class="overflow-x-auto bg-white shadow rounded-lg">
-        <table class="min-w-full table-auto">
-          <thead>
-            <tr class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
-              <th class="px-4 py-2">ID</th>
-              <th class="px-4 py-2">Title</th>
-              <th class="px-4 py-2">Company</th>
-              <th class="px-4 py-2">Location</th>
-              <th class="px-4 py-2">Type</th>
-              <th class="px-4 py-2">Status</th>
-              <th class="px-4 py-2">Posted</th>
-              <th class="px-4 py-2 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="job in jobs"
-              :key="job.id"
-              class="border-t text-sm hover:bg-gray-50"
-            >
-              <td class="px-4 py-2">{{ job.id }}</td>
-              <td class="px-4 py-2 font-medium">{{ job.title }}</td>
-              <td class="px-4 py-2">{{ job.company?.name || '—' }}</td>
-              <td class="px-4 py-2">{{ job.location }}</td>
-              <td class="px-4 py-2">{{ job.type }}</td>
-              <td class="px-4 py-2">
-                <span
-                  class="inline-block text-xs px-2 py-1 rounded font-medium"
-                  :class="{
-                    'bg-green-100 text-green-800': job.status === 'open',
-                    'bg-yellow-100 text-yellow-800': job.status === 'draft',
-                    'bg-red-100 text-red-800': job.status === 'closed'
-                  }"
-                >
-                  {{ job.status }}
-                </span>
-              </td>
-              <td class="px-4 py-2">{{ formatDate(job.created_at) }}</td>
-              <td class="px-4 py-2 text-right space-x-2">
-                <Link
-                  :href="`/admin/jobs/${job.id}`"
-                  class="text-blue-600 hover:underline"
-                >View</Link>
-                <!-- <button class="text-red-600 hover:underline">Delete</button> -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <form ref="fil" @submit.prevent="filter" class="grid grid-cols-1 md:grid-cols-4 gap-2">
+      <input type="text" v-model="form.title" id="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Ex: Engineer" />
+      <select v-model="form.job_category" name="job_category" id="" class="bg-gray-50 border border-gray-300">
+        <option value="" >Select Category</option>
+        <option v-for="jobCategory in jobCategories" :key="jobCategory.id" :value="jobCategory.id" >{{ jobCategory.name }}</option>
+      </select>
+      <select v-model="form.job_type" name="job_type" id="" class="bg-gray-50 border border-gray-300">
+        <option value="" >Select Job Type</option>
+        <option v-for="jobType in jobTypes" :key="jobType.id" :value="jobType.id" >{{ jobType.job_type }}</option>
+      </select>
+
+      <div>
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg mx-2">Search</button>
+        <button @click.prevent="clearFilter" class="bg-gray-500 text-white p-2 rounded-lg">Clear Filter</button>
       </div>
+      </form>
+
+      <div v-if="jobPosts.data.length <=  0 " class="text-gray-500 text-center text-2xl">No Job found.</div>
+
+      <div v-else>
+      <Table>
+        <template v-slot:tableHead>
+          <th class="px-4 py-2">#</th>
+          <th class="px-4 py-2">Job Title</th>
+          <th class="px-4 py-2">Company Name</th>
+          <th class="px-4 py-2">Status</th>
+          <th class="px-4 py-2">Type</th>
+          <th class="px-4 py-2">Created At</th>
+          <th class="px-4 py-2">Number Of Applicants</th>
+          <th class="px-4 py-2">Action</th>
+          
+        </template>
+        <template v-slot:tableBody>
+          <tr v-for="jobPost, index in jobPosts.data">
+            <td class="px-4 py-2">{{ ++index }}</td>
+            <td class="px-4 py-2" v-if="jobPost.title"> <Link class="text-blue-600 hover:underline" :href="route('admin.jobs.show', {slug:jobPost.slug})">{{jobPost.title }}</Link></td>
+            <td class="px-4 py-2" v-else> --  </td>
+            <td class="px-4 py-2" v-if="jobPost.user?.company_profile?.name"> <Link class="text-blue-600 hover:underline" :href="route('admin.company.show', {user:jobPost.user.id})">{{jobPost.user.company_profile.name}}</Link> </td>
+            <td class="px-4 py-2" v-else> --  </td>
+            <td class="px-4 py-2"> <JobPostStatus :status="jobPost.status" /> </td> 
+            <td class="px-4 py-2"> {{ jobPost.job_type.job_type }} </td>
+            <td class="px-4 py-2"> {{ jobPost.created_at_human }} </td>
+            <td class="px-4 py-2"> {{ jobPost.job_applications_count }} </td>
+            <td>
+              <form @submit.prevent="deleteJobpost(jobPost.id)">
+                  <button type="submit" class="border-2 border-red-500 text-xs rounded-md cursor-pointer px-1 py-1 text-red-500 ">Delete</button>
+                </form>
+            </td>
+          </tr>
+        </template>
+      </Table>
+      <pagination :pagination="jobPosts"  :baseUrl="route('admin.jobs.index')" />
+       </div>
     </div>
   </template>
   
   <script>
-//   import { Link } from '@inertiajs/vue'
-  
+  import Pagination from '@/Components/Pagination.vue';
+  import Table from '@/Components/UI/Table.vue';
+import JobPostStatus from '@/Components/JobPostStatus.vue';
+import { useForm } from '@inertiajs/vue3';
+
   export default {
     name: 'AdminJobIndex',
+    components: {Pagination, Table, JobPostStatus},
+    mounted(){
+      console.log(this.jobPosts);
+      
+    }, 
+      data() {
+    return {
+      form:useForm({
+      job_category: this.jobCategoryParam || '',
+      title: this.titleParam || '',
+      job_type: this.jobTypeParam || ''
+
+    }), 
+    }
+  }, 
+
     props: {
-      jobs: Array,
+      jobPosts: Object,
+      jobCategories: Array,
+      jobTypes: Array,
+      jobTypeParam: String,
+      jobCategoryParam: String,
+      titleParam: String,
     },
+    
     methods: {
-      formatDate(date) {
-        return new Date(date).toLocaleDateString();
+      // formatDate(date) {
+      //   return new Date(date).toLocaleDateString();
+      // },
+      deleteJobpost(id){
+          this.$inertia.delete(route('admin.jobs.delete', {jobPost: id}))        
       },
+      filter(){
+      this.form.get(route('admin.jobs.index'), {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+      });
     },
-  };
+    clearFilter(){
+      if(this.form.title != '' || this.form.job_type != '' || this.form.job_category != '' ){
+        console.log('clear');
+        
+        this.$refs.fil.reset();
+        this.$inertia.get(route('admin.jobs.index'));
+      }
+      
+    }
+      
+  },
+}
 </script>
   

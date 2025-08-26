@@ -1,44 +1,52 @@
 <template>
+
     <div class="max-w-3xl mx-auto py-10 px-4 space-y-6">
-      <h1 class="text-2xl font-bold text-blue-800 mb-4">Edit Skills</h1>
-      <div class="bg-white shadow rounded-lg p-6">
-        <div class="flex flex-wrap gap-2 mb-4">
-          <span v-for="(skill, index) in skills" :key="index" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-            {{ skill }}
-            <button @click="removeSkill(index)" class="ml-2 text-red-500 hover:text-red-700 text-xs">x</button>
-          </span>
+      <h1 class="text-2xl font-bold text-blue-900 mb-4">Edit Skills</h1>
+      <form @submit.prevent="submitSkills" class="bg-white shadow rounded-lg p-6">
+        
+        <!-- tags input componet  -->
+
+        <Tags label="Type The Name Of The Skill And Press 'Enter' Or 'Tab', Then Submit To Save The Skills" v-model="form.skills" :error="form.errors.skills" name="skills" placeholder="Enter skills"  />
+        
+        <div class="mt-10 mb-5 ">
+          <button type="submit" class="bg-blue-400 text-white p-3 rounded-lg ">Submit</button>
         </div>
-        <div class="flex gap-2">
-          <input v-model="newSkill" class="input" placeholder="Add skill..." />
-          <button @click="addSkill" class="btn-primary">Add</button>
-        </div>
-      </div>
+      </form>
     </div>
-  </template>
+</template>
   
-  <script>
-import Layout from '../../../Layouts/layout.vue';
+<script>
+import Tags from '@/Components/UI/Tags.vue';
+import { router, useForm } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
+
 
   export default {
 
-    layout: Layout,
+
+    components: {Tags},
+    props:{
+      user: Object,
+      
+    },
     data() {
       return {
-        skills: ['Vue.js', 'Laravel'],
-        newSkill: ''
+        form:useForm({
+          skills: this.user.skill?.skills ? this.user.skill?.skills : [],
+        }),
+       
       };
     },
     methods: {
-      addSkill() {
-        if (this.newSkill && !this.skills.includes(this.newSkill)) {
-          this.skills.push(this.newSkill);
-          this.newSkill = '';
-        }
-      },
-      removeSkill(i) {
-        this.skills.splice(i, 1);
+
+      submitSkills(){
+        this.form.post(route('user.profile.editSkills', this.user.id));
       }
+    },
+    mounted(){
+      
+      
     }
   };
-  </script>
+</script>
   
