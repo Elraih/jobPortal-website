@@ -35,7 +35,7 @@ cd job-portal
 ### 2. Backend Setup (Laravel 12)
 ```bash
     composer install
-    cp .env.example .env   
+    cp .env   
     php artisan key:generate
 ```
 
